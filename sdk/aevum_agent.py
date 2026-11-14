@@ -120,6 +120,8 @@ class AevumAgentCommerce:
         private_oracle_key: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Verifies deliverable and creates completion proof."""
+        if task.status != "ACTIVE":
+            raise ValueError(f"Cannot settle task with status {task.status}")
         output_hash = hashlib.sha256(deliverable_content.encode("utf-8")).hexdigest()
         passed = qag_score_bps >= task.min_quality_bps
 
