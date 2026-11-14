@@ -7,9 +7,8 @@ and generate Google A2UI 1.0 transaction receipts.
 from __future__ import annotations
 
 import hashlib
-import json
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 
@@ -22,7 +21,6 @@ class CommerceTask:
     deadline_ts: int
     min_quality_bps: int
     status: str = "PENDING"
-    tx_hash: Optional[str] = None
     evaluated_score: Optional[int] = None
     proof_hash: Optional[str] = None
 
