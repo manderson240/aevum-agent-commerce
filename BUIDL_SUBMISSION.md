@@ -29,6 +29,135 @@ Key Highlights:
 ---
 
 ## 4. Technical Architecture
+
+### End-to-End System Architecture
+```mermaid
+flowchart TD
+    subgraph ClientLayer["Client Autonomous Agent Layer"]
+        ClientAgent["Client Agent / Task Coordinator"]
+        ClientWallet["Agent EOA / Smart Account"]
+    end
+
+    subgraph AevumChain["Aevum Testnet Blockchain (Execution Layer)"]
+        Escrow["AevumAgentEscrow.sol<br/><i>Non-Reentrant Vault & Invariant Enforcer</i>"]
+        TUSD8["MockUSD8 (tUSD8 Stablecoin)<br/><i>ERC-20 Token Balance Vault</i>"]
+        StateStore["Task State Registry<br/>(status, amount, deadline, minQualityBps)"]
+    end
+
+    subgraph WorkerLayer["Decentralized Worker & Inference Layer"]
+        WorkerAgent["Worker Agent / Compute Provider"]
+        ExecutionRuntime["Task Execution Runtime (GPU / LLM)"]
+    end
+
+    subgraph OracleLayer["Independent Verification Oracle Network"]
+        VerifierOracle["Verifier Oracle / AutoHarness"]
+        QAGScorer["Discrete QAG Quality Scorer"]
+        ECDSASigner["ECDSA Attestation Signer (secp256k1)"]
+    end
+
+    subgraph SurfaceLayer["User Supervision & Generative UI"]
+        A2UI["Google A2UI 1.0 Declarative Engine"]
+        InspectorCard["Escrow Dashboard & Action Buttons"]
+    end
+
+    ClientAgent -->|"1. createTaskEscrow(taskId, worker, amount, deadline, minQualityBps)"| Escrow
+    ClientAgent -->|"Deposit tUSD8"| TUSD8
+    Escrow -->|"Lock Funds"| TUSD8
+    Escrow -->|"Record Task Parameters"| StateStore
+
+    Escrow -.->|"2. Event: TaskCreated"| WorkerAgent
+    WorkerAgent -->|"Execute Compute"| ExecutionRuntime
+    ExecutionRuntime -->|"3. Submit Output & Deliverable Hash"| VerifierOracle
+
+    VerifierOracle --> QAGScorer
+    QAGScorer -->|"Score >= minQualityBps"| ECDSASigner
+    ECDSASigner -->|"4. completeTaskWithProof(taskId, score, hash, v, r, s)"| Escrow
+
+    Escrow -->|"5. Transfer tUSD8"| WorkerAgent
+    Escrow -->|"Timeout Refund (if deadline expired)"| ClientAgent
+
+    Escrow -.->|"State Update Event"| A2UI
+    A2UI --> InspectorCard
+
+    classDef client fill:#1e1e2e,stroke:#cba6f7,stroke-width:2px,color:#cdd6f4;
+    classDef aevum fill:#181825,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
+    classDef worker fill:#313244,stroke:#f9e2af,stroke-width:2px,color:#cdd6f4;
+    classDef oracle fill:#313244,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4;
+    classDef surface fill:#313244,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4;
+
+    class ClientLayer,ClientAgent,ClientWallet client;
+    class AevumChain,Escrow,TUSD8,StateStore aevum;
+    class WorkerLayer,WorkerAgent,ExecutionRuntime worker;
+    class OracleLayer,VerifierOracle,QAGScorer,ECDSASigner oracle;
+    class SurfaceLayer,A2UI,InspectorCard surface;
+```
+
+### Multi-Party Settlement Sequence
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Client as Client Agent
+    participant Escrow as AevumAgentEscrow.sol
+    participant Token as tUSD8 Token Vault
+    actor Worker as Worker Agent
+    participant Oracle as Verifier Oracle
+    participant A2UI as Google A2UI Surface
+
+    Client->>Token: approve(Escrow, amount)
+    Client->>Escrow: createTaskEscrow(taskId, worker, amount, deadline, minQualityBps)
+    activate Escrow
+    Escrow->>Token: transferFrom(Client, Escrow, amount)
+    Escrow-->>Client: emit TaskCreated(taskId, worker, amount)
+    deactivate Escrow
+
+    Escrow-->>Worker: Notification: Task Assigned
+    activate Worker
+    Worker->>Worker: Run Inference & Generate Deliverable
+    Worker->>Oracle: submitDeliverable(taskId, deliverablePayload)
+    deactivate Worker
+    activate Oracle
+
+    Oracle->>Oracle: Evaluate QAG Claims & Invariants (Score: 9200 bps)
+    Oracle->>Oracle: Sign ECDSA Digest(taskId, score, outputHash)
+    Oracle-->>Worker: Signature Proof (v, r, s, score, outputHash)
+    deactivate Oracle
+
+    activate Worker
+    Worker->>Escrow: completeTaskWithProof(taskId, score, outputHash, v, r, s)
+    deactivate Worker
+    activate Escrow
+
+    Escrow->>Escrow: Validate Signature, Task Status & Nonce
+    Escrow->>Escrow: Assert score >= minQualityBps
+    Escrow->>Token: transfer(Worker, amount)
+    Escrow-->>A2UI: emit TaskCompleted(taskId, worker, amount, score)
+    deactivate Escrow
+
+    activate A2UI
+    A2UI-->>Client: Render Settlement Receipt & Verifier Attestation Card
+    deactivate A2UI
+```
+
+### Escrow State Machine Lifecycle
+```mermaid
+stateDiagram-v2
+    [*] --> Uninitialized
+    Uninitialized --> Active: createTaskEscrow() [tUSD8 Locked]
+    
+    Active --> Verifying: Worker Submits Deliverable
+    Verifying --> Active: Re-run Request (Before Deadline)
+    
+    Verifying --> Completed: completeTaskWithProof() [Score >= minQualityBps]
+    Active --> Cancelled: cancelTask() [Client cancels before worker assignment]
+    Active --> Refunded: refundExpiredEscrow() [Block.timestamp > Deadline]
+    Verifying --> Refunded: refundExpiredEscrow() [Deadline Reached]
+    
+    Completed --> [*]: Funds Transferred to Worker
+    Cancelled --> [*]: 100% Funds Returned to Client
+    Refunded --> [*]: 100% Funds Reclaimed by Client
+```
+
+### Implementation Specifications
 - **Smart Contracts**: Solidity 0.8.24 with optimizer enabled (`AevumAgentEscrow.sol`, `MockUSD8.sol`).
 - **Development Framework**: Foundry (`forge test -vvv` 6/6 tests passing in 35ms).
 - **Agent Integration SDK**: Python 3.11+ async SDK (`sdk/aevum_agent.py`) with A2UI 1.0 generative UI rendering.
