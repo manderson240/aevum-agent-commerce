@@ -5,7 +5,8 @@
 - **Tagline**: Verifiable Autonomous Micro-Settlement & Quality Escrow for AI Agent Swarms on Aevum Testnet (`tUSD8`)
 - **Hackathon**: Aevum Builder Challenge #1 (Nov 16 – Dec 11, 2026)
 - **Track**: DeFi / Agentic Infrastructure / Quantum-Resistant Commerce
-- **GitHub Repository**: https://github.com/aevum-agent-commerce (or user repo)
+- **GitHub Repository**: https://github.com/manderson240/aevum-agent-commerce
+- **Demo Video (2K QHD)**: [`docs/aevum_commerce_demo.mp4`](docs/aevum_commerce_demo.mp4) (6-Scene Full-Code Walkthrough)
 
 ---
 
