@@ -37,48 +37,42 @@ SCENES = [
     {
         "id": "scene0_title_hero",
         "narration": (
-            "Aevum Agent Commerce Protocol. Verifiable autonomous micro-settlement and quality-gated escrow "
-            "for AI agent swarms on the Aevum Testnet, built for the Aevum Builder Challenge Number One. "
-            "Featuring Foundry Solidity smart contracts executing six unit and fuzz tests in eight point nine milliseconds. "
-            "Cryptographic ECDSA oracle signatures blocking payout whenever agent deliverable quality falls below threshold. "
-            "Automated timeout refunds guaranteeing one hundred percent capital recovery on expired work orders. "
-            "And formal solvency invariant proofs with Cohen's d two point zero seven, Wald SPRT plus ninety-four point six, "
-            "and dual Foundry plus Pytest certification."
+            "Aevum Agent Commerce. I built a quality-gated escrow contract for payments between AI agents in tUSD8, "
+            "for the Aevum Builder Challenge Number One. "
+            "The worker is paid only when the task's score meets its threshold and the score is signed by the verifier oracle key. "
+            "If that never happens, the client can take the funds back after the deadline. "
+            "There are six Foundry tests, including a fuzz test, and three Python tests."
         ),
         "html_body": """
             <div class="header" style="text-align:center;margin-top:12px;margin-bottom:24px;">
-                <span class="badge" style="font-size:20px;padding:8px 26px;">Aevum Builder Challenge #1 • $2,500+ Pool • Post-Quantum Escrow</span>
-                <h1 style="font-size:64px;margin-top:14px;margin-bottom:10px;letter-spacing:-2px;">Aevum Agent Commerce Protocol</h1>
+                <span class="badge" style="font-size:20px;padding:8px 26px;">Aevum Builder Challenge #1</span>
+                <h1 style="font-size:64px;margin-top:14px;margin-bottom:10px;letter-spacing:-2px;">Aevum Agent Commerce</h1>
                 <p class="subtitle" style="font-size:26px;margin:0 auto;max-width:1950px;color:#38bdf8;font-weight:500;">
-                    Quality-Gated EIP-712 / ECDSA Micro-Settlement Escrow &amp; Google A2UI 1.0 SDK for tUSD8 Swarms
+                    A quality-gated tUSD8 escrow contract and a small Python helper
                 </p>
             </div>
             <div class="grid-4" style="margin-top:20px;margin-bottom:20px;">
                 <div class="card" style="text-align:center;border-color:rgba(56,189,248,0.4);background:rgba(56,189,248,0.08);">
-                    <div class="card-icon">⚡</div>
-                    <h3 style="font-size:30px;color:#38bdf8;">8.9 ms | 0.0017</h3>
-                    <p style="font-size:18px;color:#cbd5e1;">Foundry suite speed &amp; sub-millisecond verifier gate</p>
+                    <h3 style="font-size:30px;color:#38bdf8;">Lock</h3>
+                    <p style="font-size:18px;color:#cbd5e1;">createTaskEscrow pulls tUSD8 from the client and marks the task ACTIVE</p>
                 </div>
                 <div class="card" style="text-align:center;border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.08);">
-                    <div class="card-icon">🛡️</div>
-                    <h3 style="font-size:30px;color:#22c55e;">Quality Escrow</h3>
-                    <p style="font-size:18px;color:#cbd5e1;">ECDSA proof required; blocks worker payout if QAG &lt; 85%</p>
+                    <h3 style="font-size:30px;color:#22c55e;">Score gate</h3>
+                    <p style="font-size:18px;color:#cbd5e1;">completeTaskWithProof reverts if qagScore &lt; minQualityBps</p>
                 </div>
                 <div class="card" style="text-align:center;border-color:rgba(192,132,252,0.4);background:rgba(192,132,252,0.08);">
-                    <div class="card-icon">🔒</div>
-                    <h3 style="font-size:30px;color:#c084fc;">100% Refund</h3>
-                    <p style="font-size:18px;color:#cbd5e1;">Zero-loss deadline expiration &amp; reentrancy protection</p>
+                    <h3 style="font-size:30px;color:#c084fc;">Oracle signature</h3>
+                    <p style="font-size:18px;color:#cbd5e1;">ecrecover must return the oracle address set in the constructor</p>
                 </div>
                 <div class="card" style="text-align:center;border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.08);">
-                    <div class="card-icon">📊</div>
-                    <h3 style="font-size:30px;color:#f59e0b;">d = 2.07 | +94.6</h3>
-                    <p style="font-size:18px;color:#cbd5e1;">256-run Foundry fuzz + N=100 SPRT accept_h1 certified</p>
+                    <h3 style="font-size:30px;color:#f59e0b;">Refund</h3>
+                    <p style="font-size:18px;color:#cbd5e1;">refundExpiredEscrow returns the funds to the client after the deadline</p>
                 </div>
             </div>
             <div class="flow-container" style="margin-top:16px;">
-                <div class="chip chip-green" style="font-size:17px;padding:10px 20px;">Aevum Testnet (tUSD8)</div>
-                <div class="chip chip-blue" style="font-size:17px;padding:10px 20px;">Foundry 6/6 (256 Fuzz Runs)</div>
-                <div class="chip chip-green" style="font-size:17px;padding:10px 20px;">Python A2UI SDK 3/3 PASS</div>
+                <div class="chip chip-green" style="font-size:17px;padding:10px 20px;">MockUSD8 (tUSD8 stand-in)</div>
+                <div class="chip chip-blue" style="font-size:17px;padding:10px 20px;">Foundry 6/6 (256 fuzz runs)</div>
+                <div class="chip chip-green" style="font-size:17px;padding:10px 20px;">Pytest 3/3</div>
                 <div class="chip chip-blue" style="font-size:17px;padding:10px 20px;">1-Command: forge test &amp;&amp; uv run pytest</div>
             </div>
         """,
@@ -86,19 +80,19 @@ SCENES = [
     {
         "id": "scene1_problem_workflow",
         "narration": (
-            "How Aevum Verifiable Agent Commerce Prevents Unfulfilled AI Deliverables. "
-            "Without verifiable quality gating, autonomous swarm commerce fails when agents submit hallucinated outputs "
-            "and claim full payment, or abandon work orders indefinitely with locked funds. "
-            "Step one: Client deposits tUSD8 into AevumAgentEscrow with a strict minimum quality basis-points threshold and deadline. "
-            "Step two: Worker agent submits deliverable hash paired with an ECDSA oracle quality proof. "
-            "Step three: Smart contract settles payment atomically only when score equals or exceeds threshold, "
-            "otherwise reverting or returning one hundred percent capital upon timeout."
+            "How the escrow works. "
+            "If a client agent pays up front, it loses the money when the output is bad. "
+            "If it pays afterwards, the worker can go unpaid. "
+            "Step one: the client locks tUSD8 in AevumAgentEscrow with a minimum quality threshold in basis points and a deadline. "
+            "Step two: someone submits the score and output hash with a signature from the oracle key. "
+            "Step three: the contract pays the worker only if the score meets the threshold and the signature checks out. "
+            "Otherwise the call reverts, and the client can refund after the deadline."
         ),
         "html_body": """
             <div class="header">
-                <span class="badge">Architecture • Verifiable Agent Commerce</span>
-                <h1>Quality-Gated tUSD8 Micro-Settlement Workflow</h1>
-                <p class="subtitle">Cryptographic accountability before releasing autonomous agent escrow capital.</p>
+                <span class="badge">Architecture</span>
+                <h1>Quality-Gated tUSD8 Settlement</h1>
+                <p class="subtitle">The three steps the contract enforces.</p>
             </div>
             <div class="flow-container" style="margin-top:24px;">
                 <div class="flow-step">
@@ -110,35 +104,35 @@ SCENES = [
                 <div class="flow-arrow">➔</div>
                 <div class="flow-step highlight">
                     <div class="flow-num">02</div>
-                    <h4>ECDSA Quality Proof</h4>
-                    <p>Contract verifies oracle ecrecover over (taskId, qagScore, outputHash, contract) &amp; qagScore &gt;= min.</p>
-                    <div class="chip chip-blue">QAG &gt;= 85.00% Gate</div>
+                    <h4>Signed Score</h4>
+                    <p>Contract checks qagScore &gt;= minQualityBps and that ecrecover over (taskId, qagScore, outputHash, contract) is the oracle.</p>
+                    <div class="chip chip-blue">e.g. 8500 bps threshold</div>
                 </div>
                 <div class="flow-arrow">➔</div>
                 <div class="flow-step">
                     <div class="flow-num">03</div>
-                    <h4>Settle or 100% Refund</h4>
-                    <p>Releases tUSD8 to worker or refunds full capital via refundExpiredEscrow after deadline.</p>
-                    <div class="chip chip-green">Solvency Proven</div>
+                    <h4>Settle or Refund</h4>
+                    <p>Releases tUSD8 to the worker, or returns it to the client via refundExpiredEscrow after the deadline.</p>
+                    <div class="chip chip-green">One exit per task</div>
                 </div>
             </div>
             <div class="grid-2" style="margin-top:24px;">
-                <div class="card danger">
-                    <h3>❌ Unprotected Agent Payments</h3>
+                <div class="card">
+                    <h3>What the contract does</h3>
                     <ul>
-                        <li><strong>Blind Transfers:</strong> Workers get paid even for hallucinated outputs</li>
-                        <li><strong>Locked Capital:</strong> Abandoned work orders trap client tUSD8 forever</li>
-                        <li><strong>Reentrancy Risk:</strong> Naive transfers allow recursive drain exploits</li>
-                        <li><strong>Signature Replay:</strong> Missing domain/contract address in signed hash</li>
+                        <li><strong>Score gate:</strong> reverts when qagScore &lt; minQualityBps</li>
+                        <li><strong>Refund:</strong> anyone can trigger the client refund once the deadline has passed</li>
+                        <li><strong>Lock:</strong> <code>nonReentrant</code> on all four functions; status changes before each transfer</li>
+                        <li><strong>Digest:</strong> the signed hash includes <code>taskId</code> and <code>address(this)</code></li>
                     </ul>
                 </div>
-                <div class="card success">
-                    <h3>✅ AevumAgentEscrow Protocol</h3>
+                <div class="card danger">
+                    <h3>What it does not do</h3>
                     <ul>
-                        <li><strong>Quality Bound:</strong> Hard EVM revert on sub-par QAG score</li>
-                        <li><strong>Timeout Safety:</strong> Permissionless client refund post-deadline</li>
-                        <li><strong>Strict Guard:</strong> Custom <code>nonReentrant</code> + checks-effects-interactions</li>
-                        <li><strong>Bound Domain:</strong> ECDSA binds <code>address(this)</code> &amp; <code>taskId</code></li>
+                        <li><strong>No oracle service:</strong> the tests sign scores with a fixed test key</li>
+                        <li><strong>No nonce or chain ID</strong> in the signed digest</li>
+                        <li><strong>Cancel:</strong> client or worker can cancel an ACTIVE task alone</li>
+                        <li><strong>Not deployed:</strong> no testnet address in the repo</li>
                     </ul>
                 </div>
             </div>
@@ -147,16 +141,16 @@ SCENES = [
     {
         "id": "scene2_core_source_code",
         "narration": (
-            "Now let us walk through the complete Solidity smart contract in src/AevumAgentEscrow.sol lines sixty-five through one hundred ninety-five. "
-            "On the left, nonReentrant guards createTaskEscrow while validating positive amounts, future deadlines, and valid thresholds under ten thousand basis points. "
-            "On the right, completeTaskWithProof recovers and validates the verifier oracle signature over taskId, qagScore, outputHash, and address this "
-            "while enforcing quality gating, alongside refundExpiredEscrow and cancelTask."
+            "Here is the contract in src/AevumAgentEscrow.sol, lines sixty-five through one hundred ninety-five. "
+            "On the left, createTaskEscrow checks for a new task ID, a non-zero worker, a positive amount, a future deadline, and a threshold of at most ten thousand basis points. "
+            "On the right, completeTaskWithProof checks the score against the threshold and recovers the signer of the digest over taskId, qagScore, outputHash, and the contract address. "
+            "Below it are refundExpiredEscrow and cancelTask."
         ),
         "html_body": f"""
             <div class="header">
-                <span class="badge">Code Walkthrough • Solidity Escrow Contract</span>
-                <h1>Core Smart Contract: AevumAgentEscrow.sol</h1>
-                <p class="subtitle">Verbatim Solidity contract from <code>src/AevumAgentEscrow.sol</code> (lines 65 to 195, zero ellipses).</p>
+                <span class="badge">Code Walkthrough: Solidity</span>
+                <h1>AevumAgentEscrow.sol</h1>
+                <p class="subtitle">Source from <code>src/AevumAgentEscrow.sol</code>, lines 65 to 195.</p>
             </div>
             <div class="code-grid-2">
                 <div class="code-box">
@@ -166,8 +160,8 @@ SCENES = [
                     </div>
                     <pre style="font-size:13.2px;line-height:1.25;">{ESCROW_PART1}</pre>
                     <div class="eval-flow">
-                        <span class="flow-pill pass">✓ nonReentrant Guard</span>
-                        <span class="flow-pill pass">✓ Deadline &amp; BPS Bounds</span>
+                        <span class="flow-pill pass">[OK] nonReentrant lock</span>
+                        <span class="flow-pill pass">[OK] Deadline and bps bounds</span>
                     </div>
                 </div>
                 <div class="code-box">
@@ -177,8 +171,8 @@ SCENES = [
                     </div>
                     <pre style="font-size:12.6px;line-height:1.22;">{ESCROW_PART2}</pre>
                     <div class="eval-flow">
-                        <span class="flow-pill pass">✓ ECDSA ecrecover Gate</span>
-                        <span class="flow-pill pass">✓ Timeout 100% Refund</span>
+                        <span class="flow-pill pass">[OK] ecrecover == verifierOracle</span>
+                        <span class="flow-pill pass">[OK] Refund after deadline</span>
                     </div>
                 </div>
             </div>
@@ -187,16 +181,17 @@ SCENES = [
     {
         "id": "scene3_verifier_source_code",
         "narration": (
-            "Complementing the Solidity escrow is the Python Agent Commerce Client in sdk/aevum_agent.py. "
-            "CommerceTask tracks escrow amounts in tUSD8, deadlines, quality basis points, and deliverable hashes, "
-            "while AevumAgentCommerce creates deterministic task orders and compiles Google A2UI version one point zero "
-            "interactive escrow cards showing live worker address, quality threshold progress, and settlement controls."
+            "Next to the contract is a small Python helper in sdk/aevum_agent.py. "
+            "CommerceTask holds the amount, deadline, quality threshold, status, and deliverable hash. "
+            "AevumAgentCommerce creates task records, applies the same score threshold in memory, "
+            "and builds a JSON dict shaped like a Google A2UI card that shows the worker address, the score, and the two contract calls. "
+            "The helper does not talk to a chain."
         ),
         "html_body": f"""
             <div class="header">
-                <span class="badge">Code Walkthrough • Python Agent Commerce SDK</span>
-                <h1>Off-Chain Client &amp; A2UI Surface: aevum_agent.py</h1>
-                <p class="subtitle">Verbatim client dataclass &amp; A2UI 1.0 generator from <code>sdk/aevum_agent.py</code> (lines 15 to 76).</p>
+                <span class="badge">Code Walkthrough: Python helper</span>
+                <h1>Off-Chain Helper: aevum_agent.py</h1>
+                <p class="subtitle">The task dataclass and card builder from <code>sdk/aevum_agent.py</code>, lines 15 to 76.</p>
             </div>
             <div class="grid-2" style="gap:28px;height:980px;">
                 <div class="code-box">
@@ -206,23 +201,23 @@ SCENES = [
                     </div>
                     <pre style="font-size:13.5px;line-height:1.27;">{SDK_CODE}</pre>
                     <div class="eval-flow">
-                        <span class="flow-pill pass">✓ CommerceTask Order</span>
-                        <span class="flow-pill pass">✓ A2UI 1.0 Declarative Tree</span>
+                        <span class="flow-pill pass">[OK] CommerceTask record</span>
+                        <span class="flow-pill pass">[OK] A2UI-shaped JSON dict</span>
                     </div>
                 </div>
                 <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;">
                     <div>
-                        <h3>📐 Stellar Solvency &amp; Cryptographic Invariants</h3>
+                        <h3>What the contract checks</h3>
                         <ul>
-                            <li><strong>Conservation Law:</strong> Sum of <code>ACTIVE</code> escrows never exceeds contract <code>tUSD8.balanceOf(this)</code>.</li>
-                            <li><strong>State Machine Finality:</strong> <code>NONE → ACTIVE → COMPLETED | REFUNDED</code> (zero double payouts).</li>
-                            <li><strong>Oracle Forgery Defense:</strong> <code>ecrecover(msgHash, v, r, s) != verifierOracle</code> reverts cleanly.</li>
-                            <li><strong>Quality Enforcement:</strong> <code>qagScore &lt; minQualityBps</code> cannot release worker funds.</li>
+                            <li><strong>State moves only from ACTIVE:</strong> <code>NONE → ACTIVE → COMPLETED | REFUNDED</code>, status set before each transfer.</li>
+                            <li><strong>Payout needs the oracle:</strong> reverts unless <code>ecrecover(msgHash, v, r, s) == verifierOracle</code>.</li>
+                            <li><strong>Payout needs the score:</strong> reverts when <code>qagScore &lt; minQualityBps</code>.</li>
+                            <li><strong>Refund after deadline:</strong> <code>refundExpiredEscrow</code> reverts before <code>deadline</code>.</li>
                         </ul>
                     </div>
                     <div class="card success" style="padding:20px;">
-                        <h4 style="color:#22c55e;font-size:20px;margin-bottom:6px;">Property-Based Fuzz Verified</h4>
-                        <p style="font-size:17px;">256 randomized Foundry fuzz trials certify solvency &amp; settlement exactness.</p>
+                        <h4 style="color:#22c55e;font-size:20px;margin-bottom:6px;">Fuzz test</h4>
+                        <p style="font-size:17px;">256 runs over amount and score against an 8500 threshold: the worker gets exactly the amount, or the call reverts.</p>
                     </div>
                 </div>
             </div>
@@ -231,49 +226,49 @@ SCENES = [
     {
         "id": "scene4_honest_vs_adversarial_exec",
         "narration": (
-            "Side-by-side Foundry execution traces. "
-            "On the left, a valid escrow settlement presents a ninety-two percent quality score and authentic oracle ECDSA signature, "
-            "releasing two hundred fifty tUSD8 atomically and emitting TaskCompleted. "
-            "On the right, both adversarial settlement attempts: a forged ECDSA signature and a sub-par seventy percent quality score: "
-            "revert at the EVM execution gate while preserving one hundred percent of locked client collateral."
+            "The Foundry tests for the pass and fail paths. "
+            "On the left, test_CompleteTaskWithValidProof signs a score of ninety-two hundred basis points with the test oracle key "
+            "and checks that the worker receives two hundred fifty tUSD8. "
+            "On the right, test_RevertOnSubparQuality expects a revert for a score of seventy-four hundred, "
+            "and test_RevertOnInvalidSignature expects a revert for a signature from the wrong key."
         ),
         "html_body": """
             <div class="header">
-                <span class="badge">Live Walkthrough • Settlement vs. EVM Revert Defense</span>
-                <h1>Execution Traces: Certified Settlement vs. Forgery &amp; Low-Quality Revert</h1>
-                <p class="subtitle">Zero capital leakage against invalid oracle signatures and hallucinated worker deliverables.</p>
+                <span class="badge">Foundry tests</span>
+                <h1>Valid Proof vs. Low Score and Wrong Signer</h1>
+                <p class="subtitle">forge test -vv output from my machine, plus what each test checks.</p>
             </div>
             <div class="code-grid-2">
                 <div class="terminal-mini">
                     <div class="linux-bar">
-                        <span class="linux-tab">foundry-evm: Valid Quality &amp; Oracle Proof</span>
+                        <span class="linux-tab">test_CompleteTaskWithValidProof</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <div class="term-lines" style="font-size:17px;">
                         <p class="t-line"><span class="t-prompt">$</span> forge test --match-test test_CompleteTaskWithValidProof -vv</p>
-                        <p class="t-line t-cyan">[1] createTaskEscrow(task_01, 250 tUSD8, minQAG=8500)...</p>
-                        <p class="t-line t-indent">Escrow locked: contract balance = <span class="t-green">250.00 tUSD8</span></p>
-                        <p class="t-line t-cyan">[2] completeTaskWithProof(qag=9200, oracle_sig)...</p>
-                        <p class="t-line t-indent">ecrecover == verifierOracle <span class="t-green">[MATCH]</span></p>
-                        <p class="t-line t-indent">9200 >= 8500 minQualityBps <span class="t-green">[PASSED]</span></p>
-                        <p class="t-line t-indent">Worker credited: <span class="t-green">+250.00 tUSD8</span> • state=COMPLETED</p>
-                        <div class="t-banner-pass">PASS (gas: 377072) • ATOMIC SETTLEMENT VERIFIED</div>
+                        <p class="t-line">Ran 1 test for test/AevumAgentEscrow.t.sol:AevumAgentEscrowTest</p>
+                        <p class="t-line"><span class="t-green">[PASS]</span> test_CompleteTaskWithValidProof() (gas: 377072)</p>
+                        <p class="t-line">Suite result: ok. 1 passed; 0 failed; 0 skipped</p>
+                        <p class="t-line t-cyan">What it checks:</p>
+                        <p class="t-line t-indent">score 9200, threshold 8500, signed with the test oracle key</p>
+                        <p class="t-line t-indent">worker balance rises by 250 tUSD8; status COMPLETED</p>
+                        <div class="t-banner-pass">1 passed</div>
                     </div>
                 </div>
                 <div class="terminal-mini danger-border">
                     <div class="linux-bar danger-header">
-                        <span class="linux-tab-danger">foundry-evm: Forgery &amp; Sub-Par Quality Traps</span>
+                        <span class="linux-tab-danger">test_RevertOn*</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <div class="term-lines" style="font-size:17px;">
-                        <p class="t-line"><span class="t-prompt">$</span> forge test --match-test "test_RevertOn*" -vv</p>
-                        <p class="t-line t-yellow">[1] Attempt #1: qagScore = 7000 (&lt; minQualityBps 8500)...</p>
-                        <p class="t-line t-indent t-red">✕ EVM Revert: "Quality score below requirement"</p>
-                        <p class="t-line t-yellow">[2] Attempt #2: Spoofed non-oracle ECDSA signer...</p>
-                        <p class="t-line t-indent t-red">✕ EVM Revert: "Invalid verifier signature"</p>
-                        <p class="t-line t-cyan">[3] Client Funds Protection Check...</p>
-                        <p class="t-line t-indent">worker_payout = <span class="t-green">0.00 tUSD8</span> • escrow = <span class="t-green">ACTIVE (Refundable)</span></p>
-                        <div class="t-banner-fail">ALL EXPLOITS REVERTED • CLIENT tUSD8 100% PROTECTED</div>
+                        <p class="t-line"><span class="t-prompt">$</span> forge test --match-test test_RevertOn -vv</p>
+                        <p class="t-line">Ran 2 tests for test/AevumAgentEscrow.t.sol:AevumAgentEscrowTest</p>
+                        <p class="t-line"><span class="t-green">[PASS]</span> test_RevertOnInvalidSignature() (gas: 270180)</p>
+                        <p class="t-line"><span class="t-green">[PASS]</span> test_RevertOnSubparQuality() (gas: 268598)</p>
+                        <p class="t-line t-cyan">What they check:</p>
+                        <p class="t-line t-indent">score 7400: expects revert "Quality score below requirement"</p>
+                        <p class="t-line t-indent">wrong signing key: expects revert "Invalid verifier signature"</p>
+                        <div class="t-banner-fail">2 passed (both calls revert)</div>
                     </div>
                 </div>
             </div>
@@ -282,17 +277,16 @@ SCENES = [
     {
         "id": "scene5_verification_and_impact",
         "narration": (
-            "Complete Dual-Harness Verification Suite and Empirical Proof. "
-            "On the left, Foundry executes six out of six tests including two hundred fifty-six property fuzz iterations in eight point nine milliseconds. "
-            "On the right, Pytest executes three out of three Python SDK tests in zero point zero one seconds. "
-            "Across N equals one hundred V-Model trials, Cohen's d reaches two point zero seven two five with Wald SPRT plus ninety-four point five nine. "
-            "Reproduce all tests immediately with forge test and uv run pytest."
+            "Running the tests. "
+            "Foundry runs six tests, including a fuzz test with two hundred fifty-six runs, and all six pass. "
+            "Pytest runs three tests for the Python helper, and all three pass. "
+            "You can run both with forge test and uv run pytest."
         ),
         "html_body": """
             <div class="header">
-                <span class="badge">V-Model Empirical Proof • Aevum Builder Challenge</span>
-                <h1>Dual Foundry (6/6) + Pytest (3/3) &amp; N=100 Proof</h1>
-                <p class="subtitle">Full contract fuzzing paired with off-chain SDK and A2UI verification.</p>
+                <span class="badge">Tests</span>
+                <h1>Foundry (6/6) and Pytest (3/3)</h1>
+                <p class="subtitle">Output from my machine.</p>
             </div>
             <div class="grid-2" style="margin-top:18px;gap:26px;">
                 <div class="terminal-window" style="height:640px;">
@@ -301,31 +295,31 @@ SCENES = [
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <div class="terminal-content" style="font-size:14.8px;line-height:1.45;">
-                        <p class="cmd">$ forge test -v</p>
+                        <p class="cmd">$ forge test -vv</p>
                         <p><span class="pass">[PASS]</span> test_CreateTaskEscrow() (gas: 246689)</p>
                         <p><span class="pass">[PASS]</span> test_CompleteTaskWithValidProof() (gas: 377072)</p>
                         <p><span class="pass">[PASS]</span> test_RevertOnSubparQuality() (gas: 268598)</p>
                         <p><span class="pass">[PASS]</span> test_RevertOnInvalidSignature() (gas: 270180)</p>
                         <p><span class="pass">[PASS]</span> test_RefundExpiredEscrow() (gas: 366605)</p>
                         <p><span class="pass">[PASS]</span> testFuzz_EscrowSettlement(uint256,uint256) (runs: 256)</p>
-                        <p class="cmd" style="margin-top:8px;">$ uv run pytest tests/test_sdk.py -v</p>
-                        <p><span class="pass">PASSED</span> 3/3 SDK &amp; A2UI order tests in 0.01s</p>
-                        <p class="success-banner">Foundry 6 passed (8.93ms) • Pytest 3 passed (0.01s)</p>
+                        <p class="cmd" style="margin-top:8px;">$ uv run pytest -q</p>
+                        <p><span class="pass">3 passed</span> in 0.01s</p>
+                        <p class="success-banner">Foundry 6 passed (13.47ms) • Pytest 3 passed (0.01s)</p>
                     </div>
                 </div>
                 <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;height:640px;">
                     <div>
-                        <h3 style="color:#38bdf8;">📊 N=100 V-Model Statistical Profile</h3>
+                        <h3 style="color:#38bdf8;">Limits</h3>
                         <ul>
-                            <li><strong>Cohen's d Effect Size:</strong> 2.0725 (Threshold ≥ 0.80)</li>
-                            <li><strong>Wald SPRT Log-LR:</strong> +94.59 (<code>accept_h1</code>)</li>
-                            <li><strong>Verifier p50 Latency:</strong> 0.0017 ms deterministic</li>
+                            <li><strong>Not deployed:</strong> no testnet address in the repo</li>
+                            <li><strong>No oracle service:</strong> tests sign with a fixed key</li>
+                            <li><strong>Python helper:</strong> in memory only, no chain calls</li>
                             <li><strong>Contracts:</strong> <code>AevumAgentEscrow.sol</code> + <code>MockUSD8.sol</code></li>
                             <li><strong>GitHub Repository:</strong> <code>manderson240/aevum-agent-commerce</code></li>
                         </ul>
                     </div>
                     <div class="card success" style="padding:18px;">
-                        <h4 style="color:#22c55e;font-size:20px;margin-bottom:6px;">One-Command Local Verification</h4>
+                        <h4 style="color:#22c55e;font-size:20px;margin-bottom:6px;">Run it locally</h4>
                         <div class="code-pill" style="font-size:15.5px;">forge test &amp;&amp; uv run pytest -q</div>
                     </div>
                 </div>
@@ -396,8 +390,8 @@ pre { padding:16px 22px; font-family:"JetBrains Mono","DejaVu Sans Mono",monospa
 <body>
   __BODY__
   <div class="footer">
-    <div class="footer-brand">Aevum Agent Commerce Protocol • Aevum Builder Challenge #1</div>
-    <div>tUSD8 Quality-Gated Escrow + Solvency Invariant Proof • N=100 Cohen's d = 2.0725 • github.com/manderson240/aevum-agent-commerce</div>
+    <div class="footer-brand">Aevum Agent Commerce • Aevum Builder Challenge #1</div>
+    <div>Quality-gated tUSD8 escrow • github.com/manderson240/aevum-agent-commerce</div>
   </div>
 </body></html>"""
 

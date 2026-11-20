@@ -1,171 +1,89 @@
 # DoraHacks BUIDL Submission: Aevum Agent Commerce
 
-## 1. Project Overview
-- **Project Name**: Aevum Agent Commerce Protocol
-- **Tagline**: Verifiable Autonomous Micro-Settlement & Quality Escrow for AI Agent Swarms on Aevum Testnet (`tUSD8`)
-- **Hackathon**: Aevum Builder Challenge #1 (Nov 16 to Dec 11, 2026)
-- **Track**: DeFi / Agentic Infrastructure / Quantum-Resistant Commerce
-- **GitHub Repository**: https://github.com/manderson240/aevum-agent-commerce
-- **Demo Video (2K QHD)**: [`docs/aevum_commerce_demo.mp4`](docs/aevum_commerce_demo.mp4) (6-Scene Full-Code Walkthrough)
+**Hackathon**: Aevum Builder Challenge #1 (Nov 16 to Dec 11, 2026)  
+**Track**: DeFi / Agentic Infrastructure / Quantum-Resistant Commerce  
+**Repository**: https://github.com/manderson240/aevum-agent-commerce  
+
+This file mirrors what I entered in the DoraHacks form.
 
 ---
 
-## 2. Problem Statement
-Autonomous AI agents need to pay each other for compute, subagent orchestration, and proprietary data in real time. Traditional payments fail because:
-1. **AI Deliverables are Stochastic**: Agents frequently hallucinate or produce malformed outputs. Once payment is sent, funds are irretrievable.
-2. **High Dispute Latency**: Human arbitration is impossible at 1,000 requests/second.
-3. **Lack of Trustworthy Standard**: Without programmatic proof of deliverable quality, autonomous swarms cannot form trustless commerce rings.
+## Form fields
 
----
-
-## 3. The Solution: Aevum Agent Commerce
-Aevum Agent Commerce provides high-throughput, non-reentrant smart escrow contracts that lock `tUSD8` stablecoin funds until an independent verifier oracle cryptographically certifies deliverable quality above a defined threshold ($\ge 85\%$).
-
-Key Highlights:
-- **Zero-Loss Guarantee**: Timeout refunds ensure unfulfilled tasks return 100% of capital to clients.
-- **Cryptographic Oracle Signatures**: ECDSA signed proofs prevent counterfeit delivery claims.
-- **Google A2UI 1.0 Generative UI**: Declarative JSON card schemas visualize agent escrow balances, verification scores, and settlement actions.
-- **Battle-Tested**: 100% test coverage with 256-run Foundry fuzzing.
-
----
-
-## 4. Technical Architecture
-
-### End-to-End System Architecture
-```mermaid
-flowchart TD
-    subgraph ClientLayer["Client Autonomous Agent Layer"]
-        ClientAgent["Client Agent / Task Coordinator"]
-        ClientWallet["Agent EOA / Smart Account"]
-    end
-
-    subgraph AevumChain["Aevum Testnet Blockchain (Execution Layer)"]
-        Escrow["AevumAgentEscrow.sol<br/><i>Non-Reentrant Vault & Invariant Enforcer</i>"]
-        TUSD8["MockUSD8 (tUSD8 Stablecoin)<br/><i>ERC-20 Token Balance Vault</i>"]
-        StateStore["Task State Registry<br/>(status, amount, deadline, minQualityBps)"]
-    end
-
-    subgraph WorkerLayer["Decentralized Worker & Inference Layer"]
-        WorkerAgent["Worker Agent / Compute Provider"]
-        ExecutionRuntime["Task Execution Runtime (GPU / LLM)"]
-    end
-
-    subgraph OracleLayer["Independent Verification Oracle Network"]
-        VerifierOracle["Verifier Oracle / AutoHarness"]
-        QAGScorer["Discrete QAG Quality Scorer"]
-        ECDSASigner["ECDSA Attestation Signer (secp256k1)"]
-    end
-
-    subgraph SurfaceLayer["User Supervision & Generative UI"]
-        A2UI["Google A2UI 1.0 Declarative Engine"]
-        InspectorCard["Escrow Dashboard & Action Buttons"]
-    end
-
-    ClientAgent -->|"1. createTaskEscrow(taskId, worker, amount, deadline, minQualityBps)"| Escrow
-    ClientAgent -->|"Deposit tUSD8"| TUSD8
-    Escrow -->|"Lock Funds"| TUSD8
-    Escrow -->|"Record Task Parameters"| StateStore
-
-    Escrow -.->|"2. Event: TaskCreated"| WorkerAgent
-    WorkerAgent -->|"Execute Compute"| ExecutionRuntime
-    ExecutionRuntime -->|"3. Submit Output & Deliverable Hash"| VerifierOracle
-
-    VerifierOracle --> QAGScorer
-    QAGScorer -->|"Score >= minQualityBps"| ECDSASigner
-    ECDSASigner -->|"4. completeTaskWithProof(taskId, score, hash, v, r, s)"| Escrow
-
-    Escrow -->|"5. Transfer tUSD8"| WorkerAgent
-    Escrow -->|"Timeout Refund (if deadline expired)"| ClientAgent
-
-    Escrow -.->|"State Update Event"| A2UI
-    A2UI --> InspectorCard
-
-    classDef client fill:#1e1e2e,stroke:#cba6f7,stroke-width:2px,color:#cdd6f4;
-    classDef aevum fill:#181825,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
-    classDef worker fill:#313244,stroke:#f9e2af,stroke-width:2px,color:#cdd6f4;
-    classDef oracle fill:#313244,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4;
-    classDef surface fill:#313244,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4;
-
-    class ClientLayer,ClientAgent,ClientWallet client;
-    class AevumChain,Escrow,TUSD8,StateStore aevum;
-    class WorkerLayer,WorkerAgent,ExecutionRuntime worker;
-    class OracleLayer,VerifierOracle,QAGScorer,ECDSASigner oracle;
-    class SurfaceLayer,A2UI,InspectorCard surface;
+### Name
+```text
+Aevum Agent Commerce
 ```
 
-### Multi-Party Settlement Sequence
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client as Client Agent
-    participant Escrow as AevumAgentEscrow.sol
-    participant Token as tUSD8 Token Vault
-    actor Worker as Worker Agent
-    participant Oracle as Verifier Oracle
-    participant A2UI as Google A2UI Surface
-
-    Client->>Token: approve(Escrow, amount)
-    Client->>Escrow: createTaskEscrow(taskId, worker, amount, deadline, minQualityBps)
-    activate Escrow
-    Escrow->>Token: transferFrom(Client, Escrow, amount)
-    Escrow-->>Client: emit TaskCreated(taskId, worker, amount)
-    deactivate Escrow
-
-    Escrow-->>Worker: Notification: Task Assigned
-    activate Worker
-    Worker->>Worker: Run Inference & Generate Deliverable
-    Worker->>Oracle: submitDeliverable(taskId, deliverablePayload)
-    deactivate Worker
-    activate Oracle
-
-    Oracle->>Oracle: Evaluate QAG Claims & Invariants (Score: 9200 bps)
-    Oracle->>Oracle: Sign ECDSA Digest(taskId, score, outputHash)
-    Oracle-->>Worker: Signature Proof (v, r, s, score, outputHash)
-    deactivate Oracle
-
-    activate Worker
-    Worker->>Escrow: completeTaskWithProof(taskId, score, outputHash, v, r, s)
-    deactivate Worker
-    activate Escrow
-
-    Escrow->>Escrow: Validate Signature, Task Status & Nonce
-    Escrow->>Escrow: Assert score >= minQualityBps
-    Escrow->>Token: transfer(Worker, amount)
-    Escrow-->>A2UI: emit TaskCompleted(taskId, worker, amount, score)
-    deactivate Escrow
-
-    activate A2UI
-    A2UI-->>Client: Render Settlement Receipt & Verifier Attestation Card
-    deactivate A2UI
+### Brief description (120 characters max, this one is 118)
+```text
+Quality-gated tUSD8 escrow for AI agent payments: the worker is paid only on an oracle-signed score above a threshold.
 ```
 
-### Escrow State Machine Lifecycle
-```mermaid
-stateDiagram-v2
-    [*] --> Uninitialized
-    Uninitialized --> Active: createTaskEscrow() [tUSD8 Locked]
-    
-    Active --> Verifying: Worker Submits Deliverable
-    Verifying --> Active: Re-run Request (Before Deadline)
-    
-    Verifying --> Completed: completeTaskWithProof() [Score >= minQualityBps]
-    Active --> Cancelled: cancelTask() [Client cancels before worker assignment]
-    Active --> Refunded: refundExpiredEscrow() [Block.timestamp > Deadline]
-    Verifying --> Refunded: refundExpiredEscrow() [Deadline Reached]
-    
-    Completed --> [*]: Funds Transferred to Worker
-    Cancelled --> [*]: 100% Funds Returned to Client
-    Refunded --> [*]: 100% Funds Reclaimed by Client
+### Tags
+```text
+DeFi, AI Agents
 ```
 
-### Implementation Specifications
-- **Smart Contracts**: Solidity 0.8.24 with optimizer enabled (`AevumAgentEscrow.sol`, `MockUSD8.sol`).
-- **Development Framework**: Foundry (`forge test -vvv` 6/6 tests passing in 35ms).
-- **Agent Integration SDK**: Python 3.11+ async SDK (`sdk/aevum_agent.py`) with A2UI 1.0 generative UI rendering.
+### Team
+```text
+Mike Anderson (Solo builder, github.com/manderson240)
+```
+
+### Links
+- GitHub: https://github.com/manderson240/aevum-agent-commerce
+- Demo video: https://github.com/manderson240/aevum-agent-commerce/raw/main/docs/aevum_commerce_demo.mp4
+
+### Contact
+- Telegram: `manderson240`
+- Discord: `miked238725`
 
 ---
 
-## 5. Potential Impact & Ecosystem Alignment
-Aevum requires high-velocity transaction flow and real economic utility on its testnet. Aevum Agent Commerce brings:
-- **Instant Volume**: Autonomous agent swarms executing dozens of micro-transactions per minute in `tUSD8`.
-- **Ecosystem Standard**: The reference implementation for agent-to-agent paid APIs, subagent bounties, and decentralized task markets on Aevum.
+## Description
+
+# Aevum Agent Commerce
+
+### Why I built this
+When one AI agent pays another for work, paying up front means the client loses the money if the output is bad, and paying afterwards means the worker can be stiffed. I wanted a small escrow where the payment waits on a signed quality score, and where the client always has a way to get the money back if the work never gets certified.
+
+### How it works
+I wrote one Solidity contract, [`src/AevumAgentEscrow.sol`](src/AevumAgentEscrow.sol), and a 6-decimal test token, [`src/MockUSD8.sol`](src/MockUSD8.sol), that stands in for `tUSD8`.
+
+1. `createTaskEscrow(taskId, worker, amount, deadline, minQualityBps)` locks `amount` tokens from the client and records the task as ACTIVE. It rejects a reused task ID, a zero worker, a zero amount, a past deadline and a threshold above 10000 basis points.
+2. `completeTaskWithProof(taskId, qagScore, outputHash, v, r, s)` pays the worker only if the task is ACTIVE, `qagScore >= minQualityBps`, and `ecrecover` over an EIP-191 signed digest of `(taskId, qagScore, outputHash, address(this))` returns the oracle address fixed in the constructor.
+3. `refundExpiredEscrow(taskId)` returns the tokens to the client once the deadline has passed.
+4. `cancelTask(taskId)` lets the client or the worker cancel an ACTIVE task, which also refunds the client.
+
+Every exit requires ACTIVE and changes the status before transferring, so a task pays out or refunds once. All four functions use a `nonReentrant` lock.
+
+There is also a Python helper, [`sdk/aevum_agent.py`](sdk/aevum_agent.py). `AevumAgentCommerce` creates `CommerceTask` records, applies the same score threshold in memory, SHA-256 hashes the deliverable, and builds a JSON dict shaped like a Google A2UI card for showing a task's status. It does not talk to a chain.
+
+### Aevum and tUSD8
+- The contract takes any ERC-20 as the payment token. I tested it against `MockUSD8`, a 6-decimal token with the `tUSD8` symbol.
+- `foundry.toml` has an `aevum_testnet` RPC endpoint (`https://rpc-testnet.aevum.network`), and the Python helper uses the same URL as its default `rpc_url`.
+- I have not deployed the contract to the Aevum testnet, and the repo contains no deployed address.
+
+### Limits
+- There is no oracle or scoring service in the repo. The tests sign scores with a fixed test key.
+- The signed digest has no nonce and no chain ID; replay on the same contract is blocked by the status change.
+- A client can cancel after delivery but before the proof is submitted.
+- ECDSA over secp256k1 is not post-quantum.
+
+### Verification
+On my machine:
+- `forge test -vv` (Foundry 1.9.0): 6 of 6 tests pass, including a 256-run fuzz test over amount and score, in 13.47 ms.
+- `uv run pytest -q`: 3 of 3 Python tests pass in 0.01 s.
+
+```bash
+git clone https://github.com/manderson240/aevum-agent-commerce.git
+cd aevum-agent-commerce
+forge test -vv
+uv run pytest -q
+```
+
+---
+
+## Architecture diagrams
+
+See [README.md](README.md#how-it-works) for the sequence diagram and state diagram.
