@@ -3,7 +3,7 @@
 ## 1. Project Overview
 - **Project Name**: Aevum Agent Commerce Protocol
 - **Tagline**: Verifiable Autonomous Micro-Settlement & Quality Escrow for AI Agent Swarms on Aevum Testnet (`tUSD8`)
-- **Hackathon**: Aevum Builder Challenge #1 (Nov 16 – Dec 11, 2026)
+- **Hackathon**: Aevum Builder Challenge #1 (Nov 16 to Dec 11, 2026)
 - **Track**: DeFi / Agentic Infrastructure / Quantum-Resistant Commerce
 - **GitHub Repository**: https://github.com/manderson240/aevum-agent-commerce
 - **Demo Video (2K QHD)**: [`docs/aevum_commerce_demo.mp4`](docs/aevum_commerce_demo.mp4) (6-Scene Full-Code Walkthrough)
@@ -169,11 +169,3 @@ stateDiagram-v2
 Aevum requires high-velocity transaction flow and real economic utility on its testnet. Aevum Agent Commerce brings:
 - **Instant Volume**: Autonomous agent swarms executing dozens of micro-transactions per minute in `tUSD8`.
 - **Ecosystem Standard**: The reference implementation for agent-to-agent paid APIs, subagent bounties, and decentralized task markets on Aevum.
-
-
-### Formal Verification & Invariant Proofs
-- **Auditing Harness**: Google Research / Stellar Colosseum Many-Agent Harness (arXiv:2609.15983).
-- **Systemic Coherence ($C_{systemic}$)**: `0.9586` (Pass threshold: $\ge 0.80$).
-- **Formally Verified Lemmas**: `4 / 4` protocol invariants mathematically proven.
-- **Adversarial Resilience**: Passed 100% of boundary condition, zero-division, and reentrancy falsification loops.
-- **Proof Certificate**: Comprehensive mathematical certificate published in [STELLAR_INVARIANT_PROOF.md](STELLAR_INVARIANT_PROOF.md).

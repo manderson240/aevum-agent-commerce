@@ -156,12 +156,12 @@ SCENES = [
             <div class="header">
                 <span class="badge">Code Walkthrough • Solidity Escrow Contract</span>
                 <h1>Core Smart Contract: AevumAgentEscrow.sol</h1>
-                <p class="subtitle">Verbatim Solidity contract from <code>src/AevumAgentEscrow.sol</code> (lines 65–195, zero ellipses).</p>
+                <p class="subtitle">Verbatim Solidity contract from <code>src/AevumAgentEscrow.sol</code> (lines 65 to 195, zero ellipses).</p>
             </div>
             <div class="code-grid-2">
                 <div class="code-box">
                     <div class="linux-bar">
-                        <span class="linux-tab">src/AevumAgentEscrow.sol (Lines 65–122)</span>
+                        <span class="linux-tab">src/AevumAgentEscrow.sol (Lines 65 to 122)</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <pre style="font-size:13.2px;line-height:1.25;">{ESCROW_PART1}</pre>
@@ -172,7 +172,7 @@ SCENES = [
                 </div>
                 <div class="code-box">
                     <div class="linux-bar">
-                        <span class="linux-tab">src/AevumAgentEscrow.sol (Lines 123–195)</span>
+                        <span class="linux-tab">src/AevumAgentEscrow.sol (Lines 123 to 195)</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <pre style="font-size:12.6px;line-height:1.22;">{ESCROW_PART2}</pre>
@@ -196,12 +196,12 @@ SCENES = [
             <div class="header">
                 <span class="badge">Code Walkthrough • Python Agent Commerce SDK</span>
                 <h1>Off-Chain Client &amp; A2UI Surface: aevum_agent.py</h1>
-                <p class="subtitle">Verbatim client dataclass &amp; A2UI 1.0 generator from <code>sdk/aevum_agent.py</code> (lines 15–76).</p>
+                <p class="subtitle">Verbatim client dataclass &amp; A2UI 1.0 generator from <code>sdk/aevum_agent.py</code> (lines 15 to 76).</p>
             </div>
             <div class="grid-2" style="gap:28px;height:980px;">
                 <div class="code-box">
                     <div class="linux-bar">
-                        <span class="linux-tab">sdk/aevum_agent.py (Lines 15–76)</span>
+                        <span class="linux-tab">sdk/aevum_agent.py (Lines 15 to 76)</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <pre style="font-size:13.5px;line-height:1.27;">{SDK_CODE}</pre>
@@ -234,7 +234,7 @@ SCENES = [
             "Side-by-side Foundry execution traces. "
             "On the left, a valid escrow settlement presents a ninety-two percent quality score and authentic oracle ECDSA signature, "
             "releasing two hundred fifty tUSD8 atomically and emitting TaskCompleted. "
-            "On the right, both adversarial settlement attempts — a forged ECDSA signature and a sub-par seventy percent quality score — "
+            "On the right, both adversarial settlement attempts: a forged ECDSA signature and a sub-par seventy percent quality score: "
             "revert at the EVM execution gate while preserving one hundred percent of locked client collateral."
         ),
         "html_body": """
@@ -246,7 +246,7 @@ SCENES = [
             <div class="code-grid-2">
                 <div class="terminal-mini">
                     <div class="linux-bar">
-                        <span class="linux-tab">foundry-evm — Valid Quality &amp; Oracle Proof</span>
+                        <span class="linux-tab">foundry-evm: Valid Quality &amp; Oracle Proof</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <div class="term-lines" style="font-size:17px;">
@@ -262,7 +262,7 @@ SCENES = [
                 </div>
                 <div class="terminal-mini danger-border">
                     <div class="linux-bar danger-header">
-                        <span class="linux-tab-danger">foundry-evm — Forgery &amp; Sub-Par Quality Traps</span>
+                        <span class="linux-tab-danger">foundry-evm: Forgery &amp; Sub-Par Quality Traps</span>
                         <div class="linux-controls"><span>_</span><span>□</span><span>✕</span></div>
                     </div>
                     <div class="term-lines" style="font-size:17px;">
