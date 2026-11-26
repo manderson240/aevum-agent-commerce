@@ -1,0 +1,27 @@
+[project]
+name = "aevum-agent-commerce"
+version = "0.2.0"
+description = "Verifiable Agentic Commerce, Escrow & Confirmation of Payee for Aevum Testnet (tUSD8)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "eth-account>=0.13.0",
+    "pydantic>=2.0.0",
+    "web3>=7.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sdk"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,12 @@
+.git
+.env
+.venv
+.pytest_cache
+__pycache__
+*.pyc
+out
+cache
+broadcast
+lib
+docs/*.mp4
+docs/*.png
